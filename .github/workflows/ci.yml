@@ -61,5 +61,8 @@ jobs:
       - run: uv sync --all-extras --dev
       # Golden-file tests fail if a published schema model changed without a
       # version bump. See CLAUDE.md - the schema is the product contract.
+      # --no-cov: the 70% coverage gate in pyproject.toml is enforced by the
+      # full `test` job. Applied to this single file it measures ~12% and
+      # fails the job even though every golden test passes.
       - name: Golden schema check
-        run: uv run pytest tests/unit/test_schema_golden.py -q
+        run: uv run pytest tests/unit/test_schema_golden.py -q --no-cov
