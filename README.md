@@ -25,6 +25,41 @@ impossible to close a case without a recorded disposition.
 
 ---
 
+## What this repository is meant to show
+
+This project was built end to end — problem framing, specification, build,
+review, and an AI layer — as a single artifact that speaks to three different
+kinds of reviewer at once, because the work of shipping AI products actually
+requires all three:
+
+- **As product work:** the opening table is the whole thesis. The regulatory
+  gap it names (ACH has the obligation and no format, instant rails have the
+  format and no obligation) is the reason this product needs to exist, not a
+  feature list. The [**What this proves, and what it does not**](#what-this-proves-and-what-it-does-not)
+  section is the part most decks skip — a plain statement of which claims are
+  load-bearing, which are unverified, and which numbers come from synthetic
+  data rather than a real bank. Product judgment shows up as much in that
+  section as in the build.
+- **As program/technical-program work:** the [**three rules**](#the-three-rules)
+  are non-negotiable requirements carried through the whole stack — schema,
+  state machine, storage, and a static check that fails the build if a rail
+  deadline is ever written outside its one source of truth. `docs/BUILD_PLAN.md`
+  and `docs/BUILD_LOG.md` are the actual planning and decision record, not
+  after-the-fact narrative: they show milestones, a framing that got replaced
+  mid-project and why, and design trade-offs (AUC given up for leakage
+  correctness, for example) made and logged in the open.
+- **As AI/ML engineering work:** the [**AI layer**](#the-ai-layer) is built
+  on the same discipline as the rest of the system — every model output is
+  proposed, checked in code (not just prompted for), and logged, never
+  auto-applied. Four rounds of independent review found and closed real gaps
+  (wrong-amount extraction, prompt injection, forged adoption metrics), and
+  every fix has a regression test. The [**triage model**](#verifying-it)
+  section is a small, complete example of an ML evaluation done honestly:
+  a baseline it has to beat, a metric it could lose on, and the seed where it
+  came closest, printed rather than hidden.
+
+---
+
 ## Running it
 
 Two commands, from a cold clone, in under ten minutes.
@@ -145,7 +180,7 @@ the M6 model or the language model.
 ## Verifying it
 
 ```bash
-uv run pytest                    # 568 tests, 92.8% coverage, gate at 70%
+uv run pytest                    # 514 tests, 93% coverage, gate at 70%
 uv run ruff check . && uv run ruff format --check .
 ```
 
