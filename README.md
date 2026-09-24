@@ -145,7 +145,7 @@ the M6 model or the language model.
 ## Verifying it
 
 ```bash
-uv run pytest                    # 514 tests, 93% coverage, gate at 70%
+uv run pytest                    # 568 tests, 92.8% coverage, gate at 70%
 uv run ruff check . && uv run ruff format --check .
 ```
 
