@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Interlock{% endblock %}</title>
+<!-- htmx 1.9.12, served locally so the console works without reaching a CDN.
+     Same file as unpkg (sha384 verified at vendoring). BSD-2 licence alongside. -->
+<script src="/static/htmx.min.js" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"></script>
+<style>
+  /* One stylesheet, inline. A build step is one more thing that can be
+     broken in a year, and this page has to still render from a cold clone. */
+  :root {
+    --ink: #14171a;
+    --muted: #5a6570;
+    --faint: #8a929b;
+    --line: #e3e5e1;
+    --ground: #fbfbf9;
+    --panel: #ffffff;
+    --navy: #1f3a5f;
+    --navy-dark: #14263f;
+    --good: #126b45;
+    --warn: #9a5b00;
+    --bad: #8c1d18;
+    --good-bg: #e8f1ec;
+    --warn-bg: #fbf0e4;
+    --bad-bg: #fdf0ec;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--ground);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  code, .mono, td.num { font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace; }
+  a { color: var(--navy); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header {
+    background: var(--navy-dark);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+  header .brand { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+  header .inst { color: #9fb3c8; font-size: 13px; }
+  header nav { display: flex; gap: 18px; margin-left: auto; }
+  header nav a { color: #cfdbe7; font-size: 13px; }
+  header nav a:hover { color: #fff; }
+
+  main { padding: 22px 24px 60px; max-width: 1400px; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 15px; margin: 26px 0 10px; }
+  p.lede { color: var(--muted); margin: 0 0 18px; }
+
+  .cards { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 13px 16px;
+    min-width: 170px;
+  }
+  .card .label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--muted); font-weight: 600;
+  }
+  .card .value {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 23px; letter-spacing: -0.02em; margin-top: 3px;
+  }
+  .card .note { font-size: 12px; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; background: var(--panel);
+          border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase;
+       letter-spacing: .05em; color: var(--muted); background: #f7f8f6;
+       padding: 9px 12px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid #edefeb; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td.num { text-align: right; }
+  tbody tr:hover { background: #f4f6f8; }
+
+  .pill {
+    display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .03em;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .pill.rail { background: #eaf0f6; color: var(--navy); font-family: "IBM Plex Mono", monospace; }
+  .pill.binding { background: #eaf0f6; color: var(--navy); border: 1px solid #c3d3e4; }
+  .pill.house { background: #fff; color: var(--muted); border: 1px dashed #c9cec6; }
+  .pill.good { background: var(--good-bg); color: var(--good); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.bad  { background: var(--bad-bg);  color: var(--bad); }
+
+  .bar { display: inline-block; width: 50px; height: 5px; border-radius: 3px;
+         background: #e8eae6; overflow: hidden; vertical-align: middle; margin-right: 6px; }
+  .bar > span { display: block; height: 5px; border-radius: 3px; }
+
+  .panel { background: var(--panel); border: 1px solid var(--line);
+           border-radius: 9px; padding: 16px 18px; margin-bottom: 16px; }
+  .panel.ai { border-left: 3px solid #5b4bb7; }
+  .pill.ai { background: #efecfb; color: #3f3291; }
+  .quote { background: #f6f5f0; border-left: 2px solid var(--line); padding: 2px 8px;
+           font-size: 12px; color: var(--muted); }
+  textarea { width: 100%; font: inherit; padding: 10px; border: 1px solid var(--line);
+             border-radius: 7px; }
+  .panel.dashed { border-style: dashed; background: #fcfcfa; }
+
+  form.disposition { display: flex; flex-direction: column; gap: 10px; }
+  label { font-size: 12px; font-weight: 500; }
+  select, input[type=text] {
+    font-family: inherit; font-size: 13px; padding: 8px 10px;
+    border: 1px solid #c9cec6; border-radius: 7px; background: #fff; color: var(--ink);
+    max-width: 460px;
+  }
+  button {
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    padding: 9px 17px; border-radius: 7px; border: none;
+    background: var(--navy); color: #fff; cursor: pointer; align-self: flex-start;
+  }
+  button:hover { background: var(--navy-dark); }
+
+  .timeline { list-style: none; padding: 0; margin: 0; }
+  .timeline li { padding: 8px 0 8px 16px; border-left: 2px solid var(--line); }
+  .timeline li:last-child { border-left-color: var(--warn); }
+
+  .err { background: var(--bad-bg); border: 1px solid #f3cfc2; color: #6d1710;
+         padding: 11px 13px; border-radius: 7px; font-size: 13px; }
+  .ok  { background: var(--good-bg); border: 1px solid #bfdccd; color: #0d4c31;
+         padding: 11px 13px; border-radius: 7px; font-size: 13px; }
+
+  footer {
+    border-top: 1px solid var(--line); margin-top: 40px;
+    padding: 16px 24px; color: var(--muted); font-size: 12px;
+    display: flex; gap: 18px; flex-wrap: wrap;
+  }
+  .caveat { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+  @media (max-width: 720px) {
+    main { padding: 16px; }
+    table { font-size: 13px; }
+    .hide-narrow { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">Interlock</span>
+  <span class="inst">{{ institution }} &middot; receiving institution</span>
+  <nav>
+    <a href="/">Queue</a>
+    <a href="/intake">AI intake</a>
+    <a href="/ai">AI performance</a>
+    <a href="/rails">Rail rules</a>
+    <a href="/evidence">Evidence</a>
+    <a href="/docs">API</a>
+  </nav>
+</header>
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer>
+  <span>Interlock &middot; cross-rail recall operations</span>
+  <span>Support: <a href="mailto:{{ support_email }}">{{ support_email }}</a></span>
+  <span>Demonstration instance &mdash; synthetic data throughout.</span>
+</footer>
+</body>
+</html>

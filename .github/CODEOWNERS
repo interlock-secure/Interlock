@@ -1,0 +1,5 @@
+# Both maintainers review everything. No lane split - the components are
+# coupled enough that a single-lane review misses the interesting bugs.
+# Replace the placeholders with real GitHub usernames before the first PR.
+
+*   @sai-prathap-reddy-cheluri @Lekhureddy

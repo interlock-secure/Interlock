@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "interlock.api.app:app": {
+      "maxDuration": 30,
+      "excludeFiles": "{tests/**,docs/**,data/**,.venv/**,**/__pycache__/**,Dockerfile,docker-compose.yml}"
+    }
+  }
+}

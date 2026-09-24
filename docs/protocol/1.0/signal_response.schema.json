@@ -1,0 +1,113 @@
+{
+  "$defs": {
+    "RiskBand": {
+      "description": "The receiving institution's assessment of a destination account.\n\nBands rather than a numeric score, deliberately. A score invites the\nsending institution to treat another institution's model output as\ncomparable to its own, which it is not - the two are trained on different\npopulations with different labels. Bands carry the decision-relevant\ninformation without implying a false precision.",
+      "enum": [
+        "low",
+        "elevated",
+        "high",
+        "no_signal",
+        "unavailable"
+      ],
+      "title": "RiskBand",
+      "type": "string"
+    },
+    "SignalDimension": {
+      "description": "What the receiving institution contributed to its assessment.\n\nA category rather than a required field, so an institution contributes what\nits own engine actually produces instead of being forced into a model shape\nit does not have. Specification Section 5.",
+      "enum": [
+        "account_tenure",
+        "inbound_velocity_anomaly",
+        "onward_movement_pattern",
+        "prior_network_flags",
+        "sending_side_context"
+      ],
+      "title": "SignalDimension",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The receiving institution's answer, or an explicit non-answer.\n\n``explanation_strings`` is not decoration. A band with no reason is\nunusable by an analyst working a queue, and unusable by a regulator asking\nwhy a payment was held six months later. The invariant below enforces it.",
+  "properties": {
+    "confidence": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confidence"
+    },
+    "contributing_dimensions": {
+      "items": {
+        "$ref": "#/$defs/SignalDimension"
+      },
+      "title": "Contributing Dimensions",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "explanation_strings": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Explanation Strings",
+      "type": "array"
+    },
+    "protocol_version": {
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "responded_at": {
+      "format": "date-time",
+      "title": "Responded At",
+      "type": "string"
+    },
+    "responding_institution_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Responding Institution Id"
+    },
+    "risk_band": {
+      "$ref": "#/$defs/RiskBand"
+    },
+    "valid_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Valid Until"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "request_id",
+    "risk_band"
+  ],
+  "title": "SignalResponse",
+  "type": "object"
+}

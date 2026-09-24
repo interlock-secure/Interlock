@@ -1,0 +1,56 @@
+Evaluated over 5 seeds on held-out cases.
+
+ capacity       arrival        amount         model        oracle
+        5  $         97  $      2,415  $     22,453  $     48,793
+       10  $      3,109  $     30,246  $     36,292  $     57,365
+       20  $      3,619  $     36,775  $     44,276  $     64,530
+       40  $      3,961  $     44,847  $     53,012  $     70,584
+       60  $      4,683  $     51,882  $     56,380  $     73,237
+      100  $      5,601  $     59,985  $     61,414  $     74,755
+
+Model quality, mean across seeds:
+  gradient boosting  Brier 0.0858   AUC 0.665
+  logistic baseline  Brier 0.0856   AUC 0.698
+
+The 'model' column is the logistic regression; the booster is scored only.
+Does the gradient booster earn its complexity? No.
+  the logistic regression matches or beats it on both measures - the gradient booster is not earning its complexity on this data. The queue is ranked with the logistic regression.
+
+Advantage over largest-amount-first, in dollars recovered:
+  (the real competitor - it needs no model, no training data, no maintenance)
+  capacity   5: $  +20,037  (sd $11,404, worst seed $+3,428) - never loses
+  capacity  10: $   +6,046  (sd $9,817, worst seed $+0) - never loses
+  capacity  20: $   +7,501  (sd $5,312, worst seed $+0) - never loses
+  capacity  40: $   +8,165  (sd $2,365, worst seed $+5,275) - never loses
+  capacity  60: $   +4,498  (sd $4,239, worst seed $+1,281) - never loses
+  capacity 100: $   +1,429  (sd $2,397, worst seed $-829) - ahead on average, LOSES on at least one seed
+
+Share of the achievable ceiling captured:
+  capacity   5: model 46.0%   amount  5.0%   arrival  0.2%
+  capacity  10: model 63.3%   amount 52.7%   arrival  5.4%
+  capacity  20: model 68.6%   amount 57.0%   arrival  5.6%
+  capacity  40: model 75.1%   amount 63.5%   arrival  5.6%
+  capacity  60: model 77.0%   amount 70.8%   arrival  6.4%
+  capacity 100: model 82.2%   amount 80.2%   arrival  7.5%
+
+On the comparison against arrival order
+---------------------------------------
+Arrival order recovers so little at low capacity that a ratio against it runs
+to three figures. That is arithmetically true and worth nothing: the
+denominator is noise. The absolute dollar figures in the table above are the
+honest form of that comparison, and the margin against largest-amount-first is
+the one that actually has to be earned.
+
+
+What these numbers are not
+--------------------------
+Synthetic data. The recoverability curve is calibrated from UK mule-account
+data because no US equivalent was found to exist, and no real institution's
+behaviour appears anywhere in it. None of these figures transfers to
+production, and quoting them as though they did would misrepresent the work.
+
+What they do show is that the decision architecture is measurable: every
+margin above is reported with its worst seed, and the gap to a
+perfect-knowledge oracle is visible rather than hidden.
+
+Against largest-amount-first the model lost at least one seed at capacity 100. Where that happens, ranking by amount alone is a reasonable choice and the model has not shown it should replace it.

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}AI intake &middot; Interlock{% endblock %}
+{% block content %}
+<h1>AI intake</h1>
+<p class="lede">Paste a recall request that arrived by email or as a call note, or upload the PDF. The AI proposes a
+case, quoting the words behind every field. Nothing is filed until you confirm it under your name.</p>
+
+<div class="panel ai">
+  <span class="pill ai">{{ 'AI: ' ~ model_name if ai_on else 'AI not configured' }}</span>
+  {% if not ai_on %}
+  <span class="caveat">&nbsp;No API key is set, so the rules-based extractor runs instead and the draft says so.</span>
+  {% endif %}
+  <form hx-post="/intake/extract" hx-target="#draft" hx-swap="innerHTML" hx-encoding="multipart/form-data" style="margin-top:12px">
+    <textarea name="text" rows="9" placeholder="From: fraud.ops@northbay-cu.example&#10;Subject: Request for return of funds&#10;&#10;Our member was scammed. The transfer of $4,820.00, trace number 091000019887766, ...">{{ sample }}</textarea>
+    <p style="margin:10px 0 0">
+      <label>or upload a PDF / .txt: <input type="file" name="document" accept=".pdf,.txt"></label>
+      <span class="caveat">&nbsp;An uploaded file is used instead of the text box. Scanned PDFs without a text layer are refused, not guessed at.</span>
+    </p>
+    <p style="margin:10px 0 0"><button type="submit">Extract</button></p>
+  </form>
+</div>
+<div id="draft" style="margin-top:14px"></div>
+{% endblock %}

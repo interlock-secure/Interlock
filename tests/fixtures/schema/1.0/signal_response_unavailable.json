@@ -1,0 +1,13 @@
+{
+  "confidence": null,
+  "contributing_dimensions": [],
+  "explanation_strings": [
+    "Receiving institution exceeded the 300ms budget"
+  ],
+  "protocol_version": "1.0",
+  "request_id": "req_0000000000002",
+  "responded_at": "2026-09-17T16:00:00Z",
+  "responding_institution_id": null,
+  "risk_band": "unavailable",
+  "valid_until": null
+}

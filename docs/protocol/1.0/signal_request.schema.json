@@ -1,0 +1,95 @@
+{
+  "$defs": {
+    "Rail": {
+      "description": "The US payment rails a return-of-funds request can arrive on.\n\nACH is here despite not being an instant rail, and it is not an\nafterthought: it carries the only mandatory response obligation of the four\n(Nacha, ten banking days, since April 2025) and the weakest format, which is\nexactly the asymmetry Interlock exists to absorb. A system that handled only\nthe instant rails would miss the one rail where the obligation is real.\n\nFEDWIRE is declared but has no adapter in M3. It shares camt.056 and\ncamt.029 with FedNow, so adding it later is cheap; declaring it now keeps\nthe capability matrix honest about what exists rather than about what we\nhave got round to.",
+      "enum": [
+        "fednow",
+        "rtp",
+        "ach",
+        "fedwire"
+      ],
+      "title": "Rail",
+      "type": "string"
+    },
+    "SenderContextFlag": {
+      "description": "What the sending institution observed about the payment.\n\nThis is the reverse direction of the exchange: it lets the receiving\ninstitution learn why an inbound payment is suspect, which it cannot derive\nfrom its own data alone.",
+      "enum": [
+        "first_time_payee",
+        "amount_anomalous_for_customer",
+        "payee_added_this_session",
+        "customer_overrode_warning",
+        "account_recently_accessed_from_new_device"
+      ],
+      "title": "SenderContextFlag",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A sending institution asking about a destination account.\n\nNote what is absent: no customer name, no sender account, no device\nfingerprint, no free text. The receiving institution learns that someone on\nthe network is about to send a given amount to one of its accounts, and\nwhat the sending side found unusual. It does not learn who is sending.",
+  "properties": {
+    "amount_cents": {
+      "maximum": 1000000000,
+      "minimum": 0,
+      "title": "Amount Cents",
+      "type": "integer"
+    },
+    "currency": {
+      "default": "USD",
+      "pattern": "^[A-Z]{3}$",
+      "title": "Currency",
+      "type": "string"
+    },
+    "destination_account_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Destination Account Hash",
+      "type": "string"
+    },
+    "destination_institution_id": {
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "title": "Destination Institution Id",
+      "type": "string"
+    },
+    "protocol_version": {
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "rail": {
+      "$ref": "#/$defs/Rail"
+    },
+    "request_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "requesting_institution_id": {
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "title": "Requesting Institution Id",
+      "type": "string"
+    },
+    "sender_context_flags": {
+      "items": {
+        "$ref": "#/$defs/SenderContextFlag"
+      },
+      "title": "Sender Context Flags",
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "protocol_version",
+    "request_id",
+    "requesting_institution_id",
+    "destination_institution_id",
+    "destination_account_hash",
+    "amount_cents",
+    "rail"
+  ],
+  "title": "SignalRequest",
+  "type": "object"
+}

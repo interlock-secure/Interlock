@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "RecallDispositionCode": {
+      "description": "How a recall request ended.\n\nEvery member of this enum is terminal. There is deliberately no PENDING and\nno NULL: a request that goes quiet is the failure mode this protocol\nexists to remove, so the type system does not offer a way to express one.",
+      "enum": [
+        "funds_frozen",
+        "funds_returned",
+        "partial_return",
+        "insufficient_funds",
+        "account_holder_disputes",
+        "declined_with_reason",
+        "sla_expired_acknowledged"
+      ],
+      "title": "RecallDispositionCode",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The receiving institution's terminal answer.\n\nThe receiving institution always retains the decision. What this model\nremoves is the ability to make one silently, or to make one that cannot be\nexplained later.",
+  "properties": {
+    "disposition": {
+      "$ref": "#/$defs/RecallDispositionCode"
+    },
+    "disposition_reason": {
+      "anyOf": [
+        {
+          "maxLength": 512,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Disposition Reason"
+    },
+    "protocol_version": {
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "recall_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Recall Id",
+      "type": "string"
+    },
+    "resolved_at": {
+      "format": "date-time",
+      "title": "Resolved At",
+      "type": "string"
+    },
+    "responding_institution_id": {
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "title": "Responding Institution Id",
+      "type": "string"
+    },
+    "returned_amount_cents": {
+      "anyOf": [
+        {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Returned Amount Cents"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "recall_id",
+    "disposition",
+    "responding_institution_id"
+  ],
+  "title": "RecallDisposition",
+  "type": "object"
+}

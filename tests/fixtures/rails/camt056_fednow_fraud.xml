@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.056.001.08">
+  <FIToFIPmtCxlReq>
+    <Assgnmt>
+      <Id>NBCU-CXL-20260917-000481</Id>
+      <Assgnr>
+        <Agt>
+          <FinInstnId>
+            <Othr>
+              <Id>inst-northbay-cu</Id>
+            </Othr>
+          </FinInstnId>
+        </Agt>
+      </Assgnr>
+      <Assgne>
+        <Agt>
+          <FinInstnId>
+            <Othr>
+              <Id>inst-harbor-national</Id>
+            </Othr>
+          </FinInstnId>
+        </Agt>
+      </Assgne>
+      <CreDtTm>2026-09-17T14:51:02Z</CreDtTm>
+    </Assgnmt>
+    <Undrlyg>
+      <TxInf>
+        <CxlId>ILK-2026-0917-000481</CxlId>
+        <OrgnlEndToEndId>E2E-20260917-8842301</OrgnlEndToEndId>
+        <OrgnlIntrBkSttlmAmt Ccy="USD">4820.00</OrgnlIntrBkSttlmAmt>
+        <OrgnlIntrBkSttlmDt>2026-09-17T14:08:33Z</OrgnlIntrBkSttlmDt>
+        <CxlRsnInf>
+          <Rsn>
+            <Cd>FRAD</Cd>
+          </Rsn>
+          <AddtlInf>Customer reports investment scam; payee added same session.</AddtlInf>
+        </CxlRsnInf>
+      </TxInf>
+    </Undrlyg>
+  </FIToFIPmtCxlReq>
+</Document>

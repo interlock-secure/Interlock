@@ -1,0 +1,113 @@
+{
+  "$defs": {
+    "ScamCategory": {
+      "description": "Claimed scam type on a recall request.\n\nCategories follow the breakdown both UK Finance and the FTC report against,\nso benchmark results can be compared to published loss statistics rather\nthan to a taxonomy we invented.",
+      "enum": [
+        "investment",
+        "romance",
+        "impersonation",
+        "purchase",
+        "invoice",
+        "advance_fee",
+        "job_offer",
+        "other"
+      ],
+      "title": "ScamCategory",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A sending institution asking for funds to be frozen or returned.\n\n``evidence_summary`` is structured rather than free text on purpose. Free\ntext invites customer narrative, which is PII, and cannot be reconciled\nacross institutions. The sending institution asserts facts it can stand\nbehind; the receiving institution decides what they are worth.",
+  "properties": {
+    "amount_cents": {
+      "maximum": 1000000000,
+      "minimum": 0,
+      "title": "Amount Cents",
+      "type": "integer"
+    },
+    "claimed_scam_category": {
+      "$ref": "#/$defs/ScamCategory"
+    },
+    "destination_account_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Destination Account Hash",
+      "type": "string"
+    },
+    "destination_institution_id": {
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "title": "Destination Institution Id",
+      "type": "string"
+    },
+    "original_request_id": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 8,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Request Id"
+    },
+    "originating_case_reference": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Originating Case Reference",
+      "type": "string"
+    },
+    "protocol_version": {
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "recall_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Recall Id",
+      "type": "string"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "requesting_institution_id": {
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "title": "Requesting Institution Id",
+      "type": "string"
+    },
+    "sla_expires_at": {
+      "format": "date-time",
+      "title": "Sla Expires At",
+      "type": "string"
+    },
+    "victim_reported_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Victim Reported At"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "recall_id",
+    "originating_case_reference",
+    "requesting_institution_id",
+    "destination_institution_id",
+    "destination_account_hash",
+    "amount_cents",
+    "claimed_scam_category",
+    "sla_expires_at"
+  ],
+  "title": "RecallRequest",
+  "type": "object"
+}

@@ -1,0 +1,110 @@
+[project]
+name = "interlock"
+version = "0.1.0"
+description = "A cross-institution signal and recall network for US instant payments"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "Sai Prathap Reddy Cheluri" },
+    { name = "Lekhashree Srinath Reddy" },
+]
+
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "sqlmodel>=0.0.22",
+    "httpx>=0.27",
+    "structlog>=24.4",
+    "defusedxml>=0.7",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.9",
+    # The console's demo seeder generates cases with numpy at runtime.
+    "numpy>=2.1",
+    "anthropic>=1.8.0",
+    "pypdf>=6.19.0",
+]
+
+[project.optional-dependencies]
+generator = [
+    "pandas>=2.2",
+    "numpy>=2.1",
+    "faker>=30.0",
+]
+scoring = [
+    "scikit-learn>=1.5",
+]
+consoles = [
+    "streamlit>=1.39",
+    "plotly>=5.24",
+]
+observability = [
+    "opentelemetry-api>=1.28",
+    "opentelemetry-sdk>=1.28",
+    "opentelemetry-instrumentation-fastapi>=0.49b0",
+    "opentelemetry-exporter-otlp>=1.28",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "hypothesis>=6.115",
+    "ruff>=0.7",
+    "locust>=2.32",
+    "fpdf2>=2.8.8",
+]
+
+[tool.vercel]
+# Vercel loads this ASGI app as its function handler. See vercel.json.
+entrypoint = "interlock.api.app:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/interlock"]
+artifacts = ["src/interlock/api/templates/*.html"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "SIM",  # simplify
+    "RUF",  # ruff-specific
+]
+ignore = ["E501"]  # line length handled by formatter
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = [
+    "--strict-markers",
+    "--cov=interlock",
+    "--cov-report=term-missing",
+    "--cov-fail-under=70",
+]
+markers = [
+    "slow: tests that take more than a second",
+    "integration: tests that need the full stack running",
+]
+
+[tool.coverage.run]
+branch = true
+omit = ["src/interlock/consoles/*"]

@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "EventType": {
+      "description": "Every event that writes to the audit chain.\n\nAll Section 9 metrics are computed from these events alone, so that both\ninstitutions and the network operator read identical numbers from the same\nsource rather than reconciling separate counters.",
+      "enum": [
+        "signal_requested",
+        "signal_returned",
+        "signal_unavailable",
+        "decision_recorded",
+        "payment_held",
+        "payment_released",
+        "network_degraded",
+        "recall_raised",
+        "recall_acknowledged",
+        "recall_disposed",
+        "sla_breached",
+        "benchmark_run_recorded"
+      ],
+      "title": "EventType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One link in the chain.\n\nNote that the payload itself is not stored here, only its digest. The chain\nproves that a payload has not changed; it is not a copy of the payload, and\nit deliberately holds nothing that would make the chain itself a privacy\nliability if it were exported for examination.",
+  "properties": {
+    "actor_institution_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actor Institution Id"
+    },
+    "correlation_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "entry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Entry Hash",
+      "type": "string"
+    },
+    "event_type": {
+      "$ref": "#/$defs/EventType"
+    },
+    "payload_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Digest",
+      "type": "string"
+    },
+    "previous_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Previous Hash",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "sequence_number": {
+      "minimum": 0,
+      "title": "Sequence Number",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "sequence_number",
+    "previous_hash",
+    "entry_hash",
+    "event_type",
+    "correlation_id",
+    "payload_digest"
+  ],
+  "title": "AuditEntry",
+  "type": "object"
+}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}{{ c.case_id }} &middot; Interlock{% endblock %}
+
+{% block content %}
+<p><a href="/">&larr; Queue</a></p>
+<h1 class="mono">{{ c.case_id }}</h1>
+<p class="lede">
+  <span class="pill rail">{{ c.rail | upper }}</span>
+  &nbsp;{{ c.reason }} &middot; inbound from {{ c.counterparty }} &middot; arrived as {{ c.channel }}
+</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="label">Amount claimed</div>
+    <div class="value">{{ c.amount }}</div>
+  </div>
+  <div class="card">
+    <div class="label">Since settlement</div>
+    <div class="value">{{ c.elapsed }}</div>
+    <div class="note">the feature everything turns on</div>
+  </div>
+  <div class="card">
+    <div class="label">Recoverable</div>
+    <div class="value" style="color: {{ 'var(--good)' if c.probability_value >= 0.5 else ('var(--warn)' if c.probability_value >= 0.2 else 'var(--bad)') }}">
+      {{ c.probability }}
+    </div>
+  </div>
+  <div class="card">
+    <div class="label">State</div>
+    <div class="value" style="font-size:17px">{{ c.state }}</div>
+  </div>
+</div>
+
+<div class="panel {{ '' if c.binding else 'dashed' }}">
+  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+    <span class="pill {{ 'binding' if c.binding else 'house' }}">{{ c.authority }}</span>
+    <strong style="font-family: 'IBM Plex Mono', monospace; font-size: 18px">{{ c.remaining }}</strong>
+  </div>
+  <p class="caveat" style="margin: 9px 0 6px">{{ deadline_reason }}</p>
+  <p class="caveat" style="margin:0">
+    Source: <a href="{{ provenance.source_url }}">{{ provenance.source_url }}</a>
+    &middot; confidence <strong>{{ provenance.confidence.value | upper }}</strong>
+    &middot; retrieved {{ provenance.retrieved }}
+  </p>
+</div>
+
+<h2>History</h2>
+<div class="panel">
+  {% if history %}
+  <ul class="timeline">
+    {% for h in history %}
+    <li>
+      <strong>{{ h.transition }}</strong>
+      <span class="mono" style="color: var(--faint); font-size: 12px">{{ h.at }}</span>
+      <span style="color: var(--muted); font-size: 12px">&middot; {{ h.actor }}</span>
+      {% if h.ai %}<span class="pill ai" style="margin-left:6px">{{ 'followed AI' if h.ai_followed else 'overrode AI (' ~ h.ai ~ ')' }}</span>{% endif %}
+      {% if h.reason %}<br><span class="caveat">{{ h.reason }}</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="caveat" style="margin:0">Nothing recorded yet beyond arrival.</p>
+  {% endif %}
+</div>
+
+{% if not closed %}
+<h2>AI assistant</h2>
+<div id="ai-rec">
+  <div class="panel ai">
+    <span class="pill ai">AI</span>
+    <span class="caveat">&nbsp;Suggests an outcome from the facts on this page. It never records one.</span>
+    <p style="margin:10px 0 0">
+      <button type="button" hx-post="/cases/{{ c.case_id }}/ai/recommend" hx-target="#ai-rec" hx-swap="innerHTML">
+        Get AI suggestion</button>
+    </p>
+  </div>
+</div>
+{% endif %}
+
+<h2>{{ 'Outcome' if closed else 'Record a disposition' }}</h2>
+{% if closed %}
+<div class="panel">
+  <p style="margin:0 0 6px">
+    <strong>{{ case_file.disposition.value.replace('_', ' ') }}</strong>
+    &mdash; recorded by {{ case_file.disposed_by }}
+  </p>
+  {% if case_file.disposition_reason %}
+  <p class="caveat" style="margin:0">{{ case_file.disposition_reason }}</p>
+  {% endif %}
+  <p style="margin: 12px 0 0">
+    <button type="button" hx-post="/cases/{{ c.case_id }}/ai/draft" hx-target="#ai-draft" hx-swap="innerHTML">
+      Draft reply to {{ c.counterparty }} with AI</button>
+  </p>
+  <div id="ai-draft" style="margin-top:12px"></div>
+  <p class="caveat" style="margin: 10px 0 0">
+    Closed cases cannot be reopened. A case that needs revisiting is a new case referencing
+    this one, so the recorded outcome stays on the record rather than being edited away.
+  </p>
+</div>
+{% else %}
+<div class="panel">
+  <p class="caveat" style="margin: 0 0 12px">
+    This case cannot close without an outcome. Letting the window run out is itself a
+    disposition and has to be acknowledged by a named operator &mdash; it is not an absence
+    of one.
+  </p>
+  <form class="disposition"
+        hx-post="/cases/{{ c.case_id }}/transition"
+        hx-target="#result"
+        hx-swap="innerHTML">
+    <div>
+      <label for="transition">Action</label><br>
+      <select id="transition" name="transition" required>
+        {% for t in transitions %}
+        <option value="{{ t.value }}">{{ t.label }}{% if t.needs_reason %} (reason required){% endif %}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="actor">Operator</label><br>
+      <input id="actor" name="actor" type="text" value="m.ruiz" required>
+    </div>
+    <div>
+      <label for="reason">Stated basis</label><br>
+      <input id="reason" name="reason" type="text" style="width:460px"
+             placeholder="Required for declines, disputes and insufficient funds">
+    </div>
+    <input type="hidden" id="ai_suggested" name="ai_suggested" value="">
+    <button type="submit">Record</button>
+  </form>
+  <div id="result" style="margin-top: 12px"></div>
+</div>
+{% endif %}
+
+{% if rail_notes %}
+<h2>What this rail actually obliges</h2>
+<div class="panel">
+  <ul style="margin:0; padding-left: 18px">
+    {% for note in rail_notes %}<li class="caveat" style="margin-bottom:6px">{{ note }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.029.001.09">
+  <RsltnOfInvstgtn>
+    <Assgnmt>
+      <Id>NBCU-CXL-20260917-000481</Id>
+      <Assgnr>
+        <Agt>
+          <FinInstnId>
+            <Othr>
+              <Id>inst-harbor-national</Id>
+            </Othr>
+          </FinInstnId>
+        </Agt>
+      </Assgnr>
+      <Assgne>
+        <Agt>
+          <FinInstnId>
+            <Othr>
+              <Id>inst-northbay-cu</Id>
+            </Othr>
+          </FinInstnId>
+        </Agt>
+      </Assgne>
+      <CreDtTm>2026-09-17T14:51:02Z</CreDtTm>
+    </Assgnmt>
+    <CxlDtls>
+      <TxInfAndSts>
+        <CxlStsId>ILK-2026-0917-000481</CxlStsId>
+        <CxlStsRsnInf>
+          <Rsn>
+            <Cd>RJCR</Cd>
+          </Rsn>
+          <AddtlInf>Funds no longer available in beneficiary account</AddtlInf>
+        </CxlStsRsnInf>
+      </TxInfAndSts>
+    </CxlDtls>
+  </RsltnOfInvstgtn>
+</Document>

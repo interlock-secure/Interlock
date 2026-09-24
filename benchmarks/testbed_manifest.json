@@ -1,0 +1,188 @@
+{
+  "arms": [
+    {
+      "arm": "realistic",
+      "files": {
+        "accounts.csv": {
+          "rows": 8000,
+          "sha256": "4b77388ed4f4ac697f11fea66b1a9770188329956ae412e366b55833c58da559"
+        },
+        "payments.csv": {
+          "rows": 1018801,
+          "sha256": "e837744d5b9d8ee83793e43c4a9c2541f0eb42316c1bcb1189902dbecd4add57"
+        }
+      },
+      "payments": {
+        "by_split": {
+          "test": {
+            "fraud": 216,
+            "payments": 345492
+          },
+          "train": {
+            "fraud": 395,
+            "payments": 673309
+          }
+        },
+        "calibration_anchor_range_cents": [
+          110000,
+          320000
+        ],
+        "cross_institution_payments": 743230,
+        "fraud_by_category": {
+          "impersonation": 107,
+          "investment": 42,
+          "purchase": 410,
+          "romance": 52
+        },
+        "fraud_value_cents": 178476335,
+        "fraudulent_payments": 611,
+        "mean_fraud_amount_cents": 292105,
+        "median_fraud_amount_cents": 69483,
+        "observed_fraud_rate": 0.00059972,
+        "onward_sweep_payments": 345954,
+        "target_fraud_rate": 0.0006,
+        "total_payments": 1018801
+      },
+      "population": {
+        "by_account_type": {
+          "community_collector": 229,
+          "established_personal": 5688,
+          "mule_classic": 20,
+          "mule_evasive": 2,
+          "new_personal": 971,
+          "remittance_sender": 420,
+          "small_business": 670
+        },
+        "by_fairness_segment": {
+          "community_collector": 229,
+          "established_personal": 5710,
+          "remittance_corridor": 420,
+          "small_business": 670,
+          "thin_file_new": 971
+        },
+        "by_institution": {
+          "first-community-cu": 2000,
+          "metro-savings-bank": 3000,
+          "riverside-federal-cu": 1500,
+          "summit-national-bank": 1500
+        },
+        "mule_accounts": 22,
+        "mule_rate": 0.00275,
+        "total_accounts": 8000
+      },
+      "protocol_version": "1.0",
+      "rationale": "At realistic prevalence a 90-day window over this population yields too few fraudulent payments to bound any metric usefully, so the arm runs for 360 days instead. The arms therefore differ in duration as well as rate, which is stated here rather than buried: comparing their absolute counts is meaningless, and only their rates are comparable.",
+      "seed": 20260917,
+      "window_days": 360,
+      "window_start": "2026-01-01T00:00:00+00:00"
+    },
+    {
+      "arm": "inflated",
+      "files": {
+        "accounts.csv": {
+          "rows": 8000,
+          "sha256": "b9044e3f64ca10fa58e4cc99d8be4b422d88c3111fb90d9508371fd58ab71f40"
+        },
+        "payments.csv": {
+          "rows": 259899,
+          "sha256": "adbfe74167ea0426e05abbc754adefe8ca9c1d5517e7dc161012cdabd710768a"
+        }
+      },
+      "payments": {
+        "by_split": {
+          "test": {
+            "fraud": 1896,
+            "payments": 94020
+          },
+          "train": {
+            "fraud": 3146,
+            "payments": 165879
+          }
+        },
+        "calibration_anchor_range_cents": [
+          110000,
+          320000
+        ],
+        "cross_institution_payments": 189359,
+        "fraud_by_category": {
+          "impersonation": 734,
+          "investment": 315,
+          "purchase": 3617,
+          "romance": 376
+        },
+        "fraud_value_cents": 1522201464,
+        "fraudulent_payments": 5042,
+        "mean_fraud_amount_cents": 301904,
+        "median_fraud_amount_cents": 63349,
+        "observed_fraud_rate": 0.01939984,
+        "onward_sweep_payments": 90750,
+        "target_fraud_rate": 0.02,
+        "total_payments": 259899
+      },
+      "population": {
+        "by_account_type": {
+          "community_collector": 223,
+          "established_personal": 5578,
+          "mule_classic": 164,
+          "mule_evasive": 23,
+          "new_personal": 945,
+          "remittance_sender": 413,
+          "small_business": 654
+        },
+        "by_fairness_segment": {
+          "community_collector": 223,
+          "established_personal": 5765,
+          "remittance_corridor": 413,
+          "small_business": 654,
+          "thin_file_new": 945
+        },
+        "by_institution": {
+          "first-community-cu": 2000,
+          "metro-savings-bank": 3000,
+          "riverside-federal-cu": 1500,
+          "summit-national-bank": 1500
+        },
+        "mule_accounts": 187,
+        "mule_rate": 0.023375,
+        "total_accounts": 8000
+      },
+      "protocol_version": "1.0",
+      "rationale": "Elevated prevalence over the specification's 90-day window. Produces enough positives for stable intervals, at a rate roughly 33 times what institutions actually see.",
+      "seed": 20260917,
+      "window_days": 90,
+      "window_start": "2026-01-01T00:00:00+00:00"
+    }
+  ],
+  "caveat": "Synthetic data. These figures describe a generator, not a bank. A detector scored on this measures how closely it matches the generator's assumptions, which is why no accuracy claim is made anywhere in this project. The testbed exists to exercise the routing and recall paths and to give the fairness analysis a population with real overlap between mules and legitimate lookalikes.",
+  "generated_by": "interlock.generator.testbed",
+  "settings": {
+    "institutions": [
+      {
+        "account_count": 3000,
+        "display_name": "Metro Savings Bank",
+        "institution_id": "metro-savings-bank",
+        "is_large": true
+      },
+      {
+        "account_count": 2000,
+        "display_name": "First Community Credit Union",
+        "institution_id": "first-community-cu",
+        "is_large": false
+      },
+      {
+        "account_count": 1500,
+        "display_name": "Riverside Federal Credit Union",
+        "institution_id": "riverside-federal-cu",
+        "is_large": false
+      },
+      {
+        "account_count": 1500,
+        "display_name": "Summit National Bank",
+        "institution_id": "summit-national-bank",
+        "is_large": false
+      }
+    ],
+    "train_test_split_fraction": 0.667
+  },
+  "window_start": "2026-01-01T00:00:00+00:00"
+}

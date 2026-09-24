@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}AI performance &middot; Interlock{% endblock %}
+{% block content %}
+<h1>AI performance</h1>
+<p class="lede">Measured from the audit trail and the labelled test set, not from the model's own
+opinion of itself.</p>
+
+<div class="cards">
+  <div class="card"><div class="label">AI status</div>
+    <div class="value" style="font-size:17px">{{ model_name if ai_on else 'not configured' }}</div>
+    <div class="note">{{ 'set by ANTHROPIC_API_KEY' if ai_on else 'set ANTHROPIC_API_KEY to switch it on' }}</div></div>
+  <div class="card"><div class="label">Decisions made with an AI suggestion</div>
+    <div class="value">{{ a.decisions_with_ai }}</div>
+    <div class="note">{{ a.decisions_without_ai }} without</div></div>
+  <div class="card"><div class="label">Suggestions followed</div>
+    <div class="value">{{ '%.0f%%' % (a.follow_rate*100) if a.follow_rate is not none else '-' }}</div>
+    <div class="note">{{ a.followed }} followed &middot; {{ a.overridden }} overridden</div></div>
+</div>
+
+<h2>Where people overrode the AI</h2>
+<div class="panel">
+  {% if a.override_pairs %}
+  <table><tr><th>AI suggested</th><th>Person chose</th><th>Times</th></tr>
+  {% for s, c, n in a.override_pairs %}<tr><td class="mono">{{ s }}</td><td class="mono">{{ c }}</td><td class="num">{{ n }}</td></tr>{% endfor %}
+  </table>
+  {% else %}<p class="caveat" style="margin:0">No overrides recorded yet.</p>{% endif %}
+  <p class="caveat" style="margin:10px 0 0">An override is not a model error. A person who knows
+  something the model was not told should overrule it; a cluster here shows what the model is missing.</p>
+</div>
+
+<h2>What the safety checks caught</h2>
+<div class="panel">
+  <table>
+    <tr><th>Feature</th><th>Passed checks</th><th>Field dropped</th><th>Rejected</th><th>Model unavailable</th></tr>
+    {% for r in checks %}
+    <tr><td>{{ r.feature }}</td><td class="num">{{ r.ok }}</td><td class="num">{{ r.dropped }}</td><td class="num">{{ r.rejected }}</td><td class="num">{{ r.unavailable }}</td></tr>
+    {% endfor %}
+  </table>
+  <p class="caveat" style="margin:10px 0 6px">A dropped field or rejected answer is the AI saying something the checks could not verify - an invented quote, a sum not in the message, a fact it was not given, a reply that misstates the outcome. Those are the made-up answers, caught before anyone saw them.</p>
+  {% if problems %}
+  <table><tr><th>When</th><th>Feature</th><th>What was caught</th></tr>
+  {% for p in problems %}<tr><td class="mono" style="font-size:12px">{{ p.at[:16] }}</td><td>{{ p.feature }}</td><td class="caveat">{{ p.detail }}</td></tr>{% endfor %}
+  </table>
+  {% else %}<p class="caveat" style="margin:0">Nothing caught yet{{ '' if ai_on else ' - the AI is not configured, so no model answers have been checked' }}.</p>{% endif %}
+</div>
+
+<h2>Intake extraction, labelled test set</h2>
+<div class="panel">
+  <p class="caveat" style="margin:0 0 8px">Extractor scored: <strong>{{ extraction_source }}</strong>.
+  {% if not ai_on %}The AI extractor is scored with <code>uv run python -m interlock.ai.evaluate</code> once a key is set, because every run costs model calls.{% endif %}</p>
+  <pre style="margin:0; white-space:pre-wrap">{{ extraction_report }}</pre>
+</div>
+
+<h2>Guardrails, enforced in code</h2>
+<div class="panel">
+  <ul style="margin:0; padding-left:18px" class="caveat">
+    <li>The AI never records an outcome or files a case. A named person does both.</li>
+    <li>Every extracted value must quote the message verbatim, or it is dropped.</li>
+    <li>Bank identities are never taken from message text.</li>
+    <li>A suggestion must be legal for the case, cite only facts it was given, and cannot propose giving up before the deadline.</li>
+    <li>A drafted reply must state the recorded outcome, case id and exact amount, and may contain no number that is not in the case.</li>
+    <li>If a check fails or the model is down, the screen says so. It never shows a default in its place.</li>
+  </ul>
+</div>
+{% endblock %}

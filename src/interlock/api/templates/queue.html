@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Recall queue &middot; Interlock{% endblock %}
+
+{% block content %}
+<h1>Recall queue</h1>
+<p class="lede">
+  Ranked by expected recoverable value, not arrival order. Published UK data puts
+  roughly 28% of mule funds gone within fifteen minutes, so working this queue in
+  the order it arrived destroys most of what could have been saved.
+</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="label">Open cases</div>
+    <div class="value">{{ rows | length }}</div>
+    <div class="note">across every rail</div>
+  </div>
+  <div class="card">
+    <div class="label">Expected recoverable</div>
+    <div class="value" style="color: var(--good)">{{ total_expected }}</div>
+    <div class="note">decay-adjusted, whole queue</div>
+  </div>
+  <div class="card">
+    <div class="label">At risk or overdue</div>
+    <div class="value" style="color: {{ 'var(--bad)' if breaching else 'var(--ink)' }}">{{ breaching }}</div>
+    <div class="note">within a quarter of the window</div>
+  </div>
+</div>
+
+{% if rows %}
+<table>
+  <thead>
+    <tr>
+      <th style="width:38px">#</th>
+      <th>Case &amp; counterparty</th>
+      <th style="width:78px">Rail</th>
+      <th style="width:110px" class="num">Amount</th>
+      <th style="width:92px" class="num hide-narrow">Elapsed</th>
+      <th style="width:150px" class="num">Recoverable</th>
+      <th style="width:170px">Due</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td class="num" style="color: var(--muted)">{{ r.rank }}</td>
+      <td>
+        <a href="/cases/{{ r.case_id }}" class="mono">{{ r.case_id }}</a><br>
+        <span style="color: var(--muted); font-size: 12px">
+          {{ r.counterparty }} &middot; {{ r.reason }} &middot; {{ r.channel }}
+        </span>
+      </td>
+      <td><span class="pill rail">{{ r.rail | upper }}</span></td>
+      <td class="num">{{ r.amount }}</td>
+      <td class="num hide-narrow" style="color: {{ 'var(--bad)' if r.probability_value < 0.2 else 'var(--ink)' }}">
+        {{ r.elapsed }}
+      </td>
+      <td class="num">
+        <span class="bar"><span style="width: {{ r.probability }};
+          background: {{ 'var(--good)' if r.probability_value >= 0.5 else ('var(--warn)' if r.probability_value >= 0.2 else 'var(--bad)') }}"></span></span>
+        {{ r.probability }}<br>
+        <span style="color: var(--faint); font-size: 11px">{{ r.expected }} expected</span>
+      </td>
+      <td>
+        <span style="color: {{ 'var(--bad)' if r.breached else ('var(--warn)' if r.at_risk else 'var(--ink)') }}">
+          {{ r.remaining }}
+        </span><br>
+        <span class="pill {{ 'binding' if r.binding else 'house' }}">{{ r.authority }}</span>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="panel">No open cases.</div>
+{% endif %}
+
+<div class="panel dashed" style="margin-top: 18px">
+  <strong>Solid badge</strong> means a rail rule obliges an answer &mdash; currently ACH alone.
+  <strong>Dashed</strong> means Interlock's own house policy, which the counterparty never
+  agreed to. Making that distinction visible is the point of the product: no US rail has
+  both a machine-readable disposition format and an enforceable obligation to provide one.
+</div>
+
+{% if unverified %}
+<h2>Rules we could not verify at source</h2>
+<p class="caveat">
+  Carried openly rather than smoothed over. None of these is allowed to drive a deadline;
+  where one would, the system falls back to house policy and says so.
+</p>
+<table>
+  <thead><tr><th style="width:90px">Rail</th><th>Why it is unverified</th></tr></thead>
+  <tbody>
+  {% for u in unverified %}
+    <tr><td><span class="pill rail">{{ u.rail | upper }}</span></td><td class="caveat">{{ u.note }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<p class="caveat" style="margin-top: 22px">
+  Recoverability here is the published decay curve adjusted for arrival channel, not a live
+  model score. The evaluated model and its baselines are in the M6 report, where the numbers
+  can be scrutinised properly.
+</p>
+{% endblock %}
