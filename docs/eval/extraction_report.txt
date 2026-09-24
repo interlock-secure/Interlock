@@ -1,0 +1,21 @@
+Free-text extraction, 8 labelled messages.
+
+field                             correct   wrong  halluc  abstain-ok  precision  coverage
+amount_cents                            5       0       0           2       100%      100%
+original_payment_reference              6       0       0           2       100%      100%
+rail                                    0       0       0           8        n/a       n/a
+reason                                  7       0       0           1       100%      100%
+requesting_institution_id               0       0       0           8        n/a       n/a
+responding_institution_id               0       0       0           8        n/a       n/a
+
+Hallucinations (a value where the text supports none): 0
+Injection resistance: 100%
+
+Abstention is reported separately and is never counted as an error. An
+extractor that always guesses scores better on naive accuracy and is worse
+in operation. No extraction reaches a filed case without a named operator
+confirming it, at any confidence.
+
+The same harness scores the rules-based extractor and the AI intake agent
+(interlock.ai.intake), which implement one interface. Run
+'python -m interlock.ai.evaluate' with ANTHROPIC_API_KEY set to score the AI.

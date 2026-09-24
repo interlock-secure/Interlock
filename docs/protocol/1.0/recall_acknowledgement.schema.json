@@ -1,0 +1,33 @@
+{
+  "additionalProperties": false,
+  "description": "Receipt confirmation, sent before the disposition.\n\nSeparates \"we have this\" from \"we have decided\", so the sending\ninstitution's analyst can tell a waiting customer the difference between a\ncounterparty working the case and a counterparty that never saw it.",
+  "properties": {
+    "acknowledged_at": {
+      "format": "date-time",
+      "title": "Acknowledged At",
+      "type": "string"
+    },
+    "acknowledging_institution_id": {
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "title": "Acknowledging Institution Id",
+      "type": "string"
+    },
+    "protocol_version": {
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "recall_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Recall Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "recall_id",
+    "acknowledging_institution_id"
+  ],
+  "title": "RecallAcknowledgement",
+  "type": "object"
+}

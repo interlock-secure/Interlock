@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "PaymentDecision": {
+      "description": "What the sending institution did with the payment.\n\nInterlock never makes this decision. It records it, because the audit chain\nhas to be able to answer an examiner asking why a specific payment was\nheld, and the answer requires both the signal and the action taken on it.",
+      "enum": [
+        "passed",
+        "warned",
+        "held"
+      ],
+      "title": "PaymentDecision",
+      "type": "string"
+    },
+    "RiskBand": {
+      "description": "The receiving institution's assessment of a destination account.\n\nBands rather than a numeric score, deliberately. A score invites the\nsending institution to treat another institution's model output as\ncomparable to its own, which it is not - the two are trained on different\npopulations with different labels. Bands carry the decision-relevant\ninformation without implying a false precision.",
+      "enum": [
+        "low",
+        "elevated",
+        "high",
+        "no_signal",
+        "unavailable"
+      ],
+      "title": "RiskBand",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "What the sending institution did, and on what basis.\n\nRecorded rather than transmitted: this does not go to the receiving\ninstitution, it goes to the audit chain. It is what lets the network answer\n\"why was this payment held\" with the signal, the threshold and the action\nall in one place.",
+  "properties": {
+    "acted_on_band": {
+      "$ref": "#/$defs/RiskBand"
+    },
+    "case_reference": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Case Reference"
+    },
+    "decided_at": {
+      "format": "date-time",
+      "title": "Decided At",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/PaymentDecision"
+    },
+    "institution_threshold": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Institution Threshold",
+      "type": "string"
+    },
+    "protocol_version": {
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Request Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "request_id",
+    "decision",
+    "acted_on_band",
+    "institution_threshold"
+  ],
+  "title": "DecisionRecord",
+  "type": "object"
+}

@@ -1,0 +1,19 @@
+{
+  "confidence": 0.87,
+  "contributing_dimensions": [
+    "account_tenure",
+    "inbound_velocity_anomaly",
+    "onward_movement_pattern"
+  ],
+  "explanation_strings": [
+    "Account opened 11 days ago",
+    "14 first-time inbound transfers in the last 24 hours",
+    "Funds swept onward within 6 minutes on 11 of those transfers"
+  ],
+  "protocol_version": "1.0",
+  "request_id": "req_0000000000001",
+  "responded_at": "2026-09-17T16:00:00Z",
+  "responding_institution_id": "metro-savings-bank",
+  "risk_band": "high",
+  "valid_until": "2026-09-17T16:05:00Z"
+}

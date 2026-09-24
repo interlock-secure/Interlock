@@ -1,0 +1,46 @@
+<div class="panel">
+  <h2 style="margin-top:0">Proposed case</h2>
+  <details style="margin-bottom:10px"><summary class="caveat">Text that was read</summary>
+    <pre style="white-space:pre-wrap; font-size:12px">{{ source_text }}</pre></details>
+  <table>
+    <tr><th>Field</th><th>Proposed</th><th>Confidence</th><th>From the message</th></tr>
+    {% for name, f in fields %}
+    <tr>
+      <td class="mono">{{ name }}</td>
+      <td class="mono">{{ f.value }}</td>
+      <td>{% if f.is_confident %}<span class="pill good">{{ '%.0f' % (f.confidence*100) }}%</span>{% else %}<span class="pill warn">{{ '%.0f' % (f.confidence*100) }}% - check</span>{% endif %}</td>
+      <td><span class="quote">{{ f.evidence }}</span></td>
+    </tr>
+    {% endfor %}
+    {% for name in abstained %}
+    <tr><td class="mono">{{ name }}</td><td colspan="3" class="caveat">Left blank on purpose - fill it in below.</td></tr>
+    {% endfor %}
+  </table>
+  {% if notes %}
+  <ul style="margin:12px 0 0; padding-left:18px">{% for n in notes %}<li class="caveat">{{ n }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  <h2>Confirm and file</h2>
+  <form hx-post="/intake/confirm" hx-target="#draft" hx-swap="innerHTML" class="disposition" style="flex-wrap:wrap">
+    <input type="hidden" name="token" value="{{ token }}">
+    <div><label>Rail</label><br>
+      <select name="rail" required>
+        <option value="" {{ 'selected' if not pre.rail }} disabled>choose...</option>
+        {% for r in rails %}<option value="{{ r }}" {{ 'selected' if r == pre.rail }}>{{ r }}</option>{% endfor %}
+      </select></div>
+    <div><label>Amount (USD)</label><br><input name="amount" required value="{{ pre.amount }}"></div>
+    <div><label>Reason</label><br>
+      <select name="reason" required>
+        <option value="" {{ 'selected' if not pre.reason }} disabled>choose...</option>
+        {% for r in reasons %}<option value="{{ r }}" {{ 'selected' if r == pre.reason }}>{{ r }}</option>{% endfor %}
+      </select></div>
+    <div><label>Payment reference</label><br><input name="reference" required value="{{ pre.reference }}"></div>
+    <div><label>Requesting institution id</label><br>
+      <input name="requesting" required value="{{ bank.institution_id if bank else '' }}" placeholder="e.g. inst-northbay-cu">
+      {% if bank %}<br><span class="pill warn">suggested from {{ bank.basis }}: {{ bank.name }} - confirm</span>
+      <br><span class="caveat">{{ 'The From: line is written by the sender. Check it against the channel this arrived on.' if bank.basis == 'sender domain' else 'The message names this bank; that alone does not prove who sent it.' }}</span>{% endif %}
+    </div>
+    <div><label>Operator</label><br><input name="operator" required value="m.ruiz"></div>
+    <button type="submit">File case</button>
+  </form>
+</div>

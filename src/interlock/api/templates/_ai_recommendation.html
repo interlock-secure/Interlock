@@ -1,0 +1,34 @@
+{# The AI recommendation panel. Shown on the case page; never applies anything. #}
+<div class="panel ai">
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+    <span class="pill ai">AI suggestion</span>
+    {% if r.status == 'ok' %}
+      <strong style="font-size:16px">{{ r.label }}</strong>
+      <span class="caveat">confidence {{ '%.0f' % (r.confidence * 100) }}% &middot; {{ r.model }}</span>
+    {% elif r.status == 'rejected' %}
+      <span class="pill bad">rejected by checks</span>
+    {% else %}
+      <span class="pill house">unavailable</span>
+    {% endif %}
+  </div>
+
+  {% if r.status == 'ok' %}
+    <p style="margin:10px 0 6px">{{ r.rationale }}</p>
+    <p class="caveat" style="margin:0">Based on:
+      {% for f in r.cited_facts %}<code>{{ f }} = {{ r.facts.get(f) }}</code>{% if not loop.last %}, {% endif %}{% endfor %}
+    </p>
+    {% if r.missing_information %}
+    <p class="caveat" style="margin:6px 0 0">Would help to know: {{ r.missing_information | join('; ') }}</p>
+    {% endif %}
+    <p style="margin:10px 0 0">
+      <button type="button"
+        onclick="document.getElementById('transition').value='{{ r.action.value }}';document.getElementById('ai_suggested').value='{{ r.action.value }}';">
+        Use this suggestion</button>
+      <span class="caveat">&nbsp;Pre-selects it below. You still record it, under your name.</span>
+    </p>
+    <script>document.getElementById('ai_suggested').value='{{ r.action.value }}';</script>
+  {% else %}
+    <p class="caveat" style="margin:10px 0 0">{{ r.problem }}. No suggestion is shown rather than a guess.</p>
+    <script>document.getElementById('ai_suggested').value='';</script>
+  {% endif %}
+</div>

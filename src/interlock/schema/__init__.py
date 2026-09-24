@@ -1,0 +1,153 @@
+"""The Interlock wire protocol.
+
+This package is the product. Everything else in the repository codes against
+it, and two institutions that both speak it can exchange fraud signals without
+either one adopting the other's vendor.
+
+Changing a published model is a versioned event, not a refactor. See
+tests/unit/test_schema_golden.py for what that costs.
+"""
+
+from interlock.schema.audit import (
+    GENESIS_HASH,
+    AuditEntry,
+    ChainVerificationError,
+    append_entry,
+    digest_payload,
+    verify_chain,
+)
+from interlock.schema.case import (
+    CaseState,
+    Channel,
+    Direction,
+    NativeEnvelope,
+    RecallCase,
+    RecallReason,
+    cents_from_decimal,
+)
+from interlock.schema.common import (
+    AccountHash,
+    AmountCents,
+    CaseReference,
+    Confidence,
+    EventType,
+    InstitutionId,
+    PaymentDecision,
+    Rail,
+    RiskBand,
+    ScamCategory,
+    SenderContextFlag,
+    SignalDimension,
+    hash_account,
+    looks_like_raw_identifier,
+    utc_now,
+)
+from interlock.schema.pii import (
+    APPROVED_WIRE_FIELDS,
+    PrivacyViolation,
+    audit_all_wire_models,
+    audit_model,
+    scan_serialised,
+)
+from interlock.schema.rails import (
+    RAIL_PROFILES,
+    DispositionFormat,
+    Provenance,
+    RailProfile,
+    ResponseObligation,
+    ResponseWindow,
+    SourceConfidence,
+    UnverifiedRuleError,
+    WindowUnit,
+    house_policy_window,
+    profile_for,
+    rails_with_enforceable_deadlines,
+    render_matrix_markdown,
+    require_verified_window,
+    unverified_rules,
+)
+from interlock.schema.recall import (
+    RecallAcknowledgement,
+    RecallDisposition,
+    RecallDispositionCode,
+    RecallRequest,
+    default_recall_sla,
+)
+from interlock.schema.signal import (
+    DEFAULT_SIGNAL_VALIDITY,
+    DecisionRecord,
+    SignalRequest,
+    SignalResponse,
+)
+from interlock.schema.versioning import (
+    CURRENT_VERSION,
+    SUPPORTED_VERSIONS,
+    ProtocolVersion,
+    VersionNegotiationError,
+    negotiate,
+)
+
+__all__ = [
+    "APPROVED_WIRE_FIELDS",
+    "CURRENT_VERSION",
+    "DEFAULT_SIGNAL_VALIDITY",
+    "GENESIS_HASH",
+    "RAIL_PROFILES",
+    "SUPPORTED_VERSIONS",
+    "AccountHash",
+    "AmountCents",
+    "AuditEntry",
+    "CaseReference",
+    "CaseState",
+    "ChainVerificationError",
+    "Channel",
+    "Confidence",
+    "DecisionRecord",
+    "Direction",
+    "DispositionFormat",
+    "EventType",
+    "InstitutionId",
+    "NativeEnvelope",
+    "PaymentDecision",
+    "PrivacyViolation",
+    "ProtocolVersion",
+    "Provenance",
+    "Rail",
+    "RailProfile",
+    "RecallAcknowledgement",
+    "RecallCase",
+    "RecallDisposition",
+    "RecallDispositionCode",
+    "RecallReason",
+    "RecallRequest",
+    "ResponseObligation",
+    "ResponseWindow",
+    "RiskBand",
+    "ScamCategory",
+    "SenderContextFlag",
+    "SignalDimension",
+    "SignalRequest",
+    "SignalResponse",
+    "SourceConfidence",
+    "UnverifiedRuleError",
+    "VersionNegotiationError",
+    "WindowUnit",
+    "append_entry",
+    "audit_all_wire_models",
+    "audit_model",
+    "cents_from_decimal",
+    "default_recall_sla",
+    "digest_payload",
+    "hash_account",
+    "house_policy_window",
+    "looks_like_raw_identifier",
+    "negotiate",
+    "profile_for",
+    "rails_with_enforceable_deadlines",
+    "render_matrix_markdown",
+    "require_verified_window",
+    "scan_serialised",
+    "unverified_rules",
+    "utc_now",
+    "verify_chain",
+]

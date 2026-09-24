@@ -1,0 +1,23 @@
+{
+  "documents": [
+    "audit_entry",
+    "decision_record",
+    "recall_acknowledgement",
+    "recall_disposition",
+    "recall_request",
+    "signal_request",
+    "signal_response"
+  ],
+  "invariants_not_expressible_in_json_schema": [
+    "SignalResponse: a risk_band of low, elevated or high must carry at least one contributing dimension, at least one explanation string, and a responding institution id.",
+    "SignalResponse: a risk_band of no_signal or unavailable must carry no contributing dimensions and no confidence value.",
+    "DecisionRecord: a decision of held is invalid when acted_on_band is unavailable. A network outage must not become a payment outage.",
+    "RecallDisposition: funds_returned and partial_return require returned_amount_cents; every other disposition must omit it entirely rather than sending zero.",
+    "RecallDisposition: declined_with_reason, account_holder_disputes and insufficient_funds require a disposition_reason.",
+    "RecallRequest: sla_expires_at must be strictly after requested_at.",
+    "All models: set-valued fields serialise in sorted order. Implementations that emit them unsorted will produce audit digests that diverge from ours.",
+    "All models: monetary values are integer cents. A fractional amount is a protocol violation, not a value to round.",
+    "All models: undeclared fields are rejected, not ignored. Negotiate the protocol version first and send only fields defined at that version."
+  ],
+  "protocol_version": "1.0"
+}

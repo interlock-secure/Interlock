@@ -1,0 +1,19 @@
+# One-click hosting on Render (free tier).
+# Render reads this file when you choose "New > Blueprint" and point it at the repo.
+services:
+  - type: web
+    name: interlock
+    runtime: python
+    plan: free
+    buildCommand: pip install uv && uv sync --frozen --no-dev --extra generator --extra scoring
+    startCommand: uv run uvicorn interlock.api.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.0"
+      # The free tier has no persistent disk, so the demo database lives in
+      # /tmp and is re-seeded on every restart. Fine for a demo, not for real data.
+      - key: INTERLOCK_DATABASE
+        value: /tmp/interlock.db
+      - key: INTERLOCK_SEED_DEMO
+        value: "1"

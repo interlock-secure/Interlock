@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.hypothesis/
+
+# Environment - never commit credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Generated data - regenerate with the seeded generator instead
+data/generated/
+benchmarks/results/*.json
+!benchmarks/results/.gitkeep
+
+# Local
+.DS_Store
+.idea/
+.vscode/

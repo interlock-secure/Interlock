@@ -1,0 +1,10 @@
+{
+  "actor_institution_id": "first-community-cu",
+  "correlation_id": "req_0000000000001",
+  "entry_hash": "48658b824cd085879861608218a1140969290fc5e55dbfbe1a80f628cacd7663",
+  "event_type": "signal_requested",
+  "payload_digest": "08b0683948e4e823178ff4885508ed24a681851df6bcfc3a7fcd54adbc892286",
+  "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "recorded_at": "2026-09-17T16:00:00Z",
+  "sequence_number": 0
+}

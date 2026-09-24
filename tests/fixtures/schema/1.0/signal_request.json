@@ -1,0 +1,15 @@
+{
+  "amount_cents": 540000,
+  "currency": "USD",
+  "destination_account_hash": "11850921a527f6ab425996d8ee43db048341d82c5c30adeca155e515304e780b",
+  "destination_institution_id": "metro-savings-bank",
+  "protocol_version": "1.0",
+  "rail": "fednow",
+  "request_id": "req_0000000000001",
+  "requested_at": "2026-09-17T16:00:00Z",
+  "requesting_institution_id": "first-community-cu",
+  "sender_context_flags": [
+    "amount_anomalous_for_customer",
+    "first_time_payee"
+  ]
+}

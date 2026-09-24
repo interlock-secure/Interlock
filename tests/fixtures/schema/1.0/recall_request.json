@@ -1,0 +1,14 @@
+{
+  "amount_cents": 540000,
+  "claimed_scam_category": "investment",
+  "destination_account_hash": "11850921a527f6ab425996d8ee43db048341d82c5c30adeca155e515304e780b",
+  "destination_institution_id": "metro-savings-bank",
+  "original_request_id": "req_0000000000001",
+  "originating_case_reference": "CASE-2026-44821",
+  "protocol_version": "1.0",
+  "recall_id": "rcl_0000000000001",
+  "requested_at": "2026-09-17T20:00:00Z",
+  "requesting_institution_id": "first-community-cu",
+  "sla_expires_at": "2026-09-18T20:00:00Z",
+  "victim_reported_at": "2026-09-17T19:00:00Z"
+}

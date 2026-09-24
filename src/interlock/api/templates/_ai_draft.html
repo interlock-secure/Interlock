@@ -1,0 +1,26 @@
+<div class="panel ai">
+  <span class="pill ai">AI draft reply</span>
+  {% if d.status == 'ok' %}
+    <span class="caveat">&nbsp;{{ d.model }} &middot; checked against the record &middot; not sent</span>
+    <p style="margin:10px 0 4px"><strong>{{ d.subject }}</strong></p>
+    <pre id="draft-body" style="white-space:pre-wrap; font-family:inherit; margin:0">{{ d.body }}</pre>
+    <p style="margin:10px 0 0">
+      <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('draft-body').innerText)">Copy</button>
+      <span class="caveat">&nbsp;Send it yourself through your institution's channel.</span>
+    </p>
+  {% elif d.status == 'rejected' %}
+    <span class="pill bad">rejected by checks</span>
+    <p class="caveat" style="margin:10px 0 0">{{ d.problem }}. The draft was not shown.</p>
+  {% else %}
+    <span class="pill house">unavailable</span>
+    <p class="caveat" style="margin:10px 0 0">{{ d.problem }}.</p>
+  {% endif %}
+</div>
+
+<div class="panel" style="margin-top:12px">
+  <span class="pill rail">{{ formal.format }}</span>
+  <span class="caveat">&nbsp;Formal reply for this rail, generated from the record - not by the AI.</span>
+  <p class="caveat" style="margin:8px 0">{{ formal.note }}</p>
+  <pre id="formal-body" style="white-space:pre-wrap; font-size:12px; max-height:320px; overflow:auto; background:#f6f5f0; padding:10px; border-radius:6px">{{ formal.content }}</pre>
+  <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('formal-body').innerText)">Copy</button>
+</div>

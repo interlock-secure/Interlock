@@ -1,0 +1,16 @@
+# For running it locally in one command. Not the deployment topology - there
+# is only one service, and that is the point.
+services:
+  interlock:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Change this one value to route support mail somewhere else.
+      INTERLOCK_SUPPORT_EMAIL: support@interlock-secure.com
+      INTERLOCK_INSTITUTION_NAME: Harbor National
+      INTERLOCK_SEED_DEMO: "1"
+    volumes:
+      - interlock-data:/data
+volumes:
+  interlock-data:

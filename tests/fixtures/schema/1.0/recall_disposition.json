@@ -1,0 +1,9 @@
+{
+  "disposition": "partial_return",
+  "disposition_reason": "Remaining balance had already been withdrawn at an ATM",
+  "protocol_version": "1.0",
+  "recall_id": "rcl_0000000000001",
+  "resolved_at": "2026-09-18T01:00:00Z",
+  "responding_institution_id": "metro-savings-bank",
+  "returned_amount_cents": 180000
+}
